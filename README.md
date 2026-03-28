@@ -1,4 +1,4 @@
-# itkannadigaru — AWS Infrastructure with Terraform & Jenkins
+# Quantamvector — AWS Infrastructure with Terraform & Jenkins
 
 This repository provisions a production-ready AWS infrastructure using Terraform, organized into layered modules and automated through a Jenkins CI/CD pipeline.
 
