@@ -11,7 +11,7 @@ pipeline {
     environment {
         AWS_ACCESS_KEY_ID     = credentials('AWS_ACCESS_KEY_ID')
         AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
-        AWS_DEFAULT_REGION    = 'us-west-2'
+        AWS_DEFAULT_REGION    = 'ap-northeast-1'
     }
 
     agent any
@@ -22,7 +22,7 @@ pipeline {
             steps {
                 script {
                     dir('terraform') {
-                        git url: 'https://github.com/ITkannadigaru/Infrastructure.git', branch: 'main'
+                        git url: 'https://github.com/quantamvector/Infrastructure.git', branch: 'main'
                     }
                 }
             }
@@ -36,8 +36,8 @@ pipeline {
                 sh 'cd terraform/0-bootstrap && terraform init -input=false'
                 // Import existing resources into state if they already exist in AWS
                 // '|| true' ensures pipeline does not fail if resource does not exist yet (first run)
-                sh 'cd terraform/0-bootstrap && terraform import aws_s3_bucket.tf_state itkannadigaru-infra-statefile-backup || true'
-                sh 'cd terraform/0-bootstrap && terraform import aws_dynamodb_table.tf_lock itkannadigaru-terraform-locks || true'
+                sh 'cd terraform/0-bootstrap && terraform import aws_s3_bucket.tf_state quantamvector-infra-statefile-backup || true'
+                sh 'cd terraform/0-bootstrap && terraform import aws_dynamodb_table.tf_lock quantamvector-terraform-locks || true'
                 sh 'cd terraform/0-bootstrap && terraform plan -out tfplan'
                 sh 'cd terraform/0-bootstrap && terraform show -no-color tfplan > tfplan.txt'
             }
