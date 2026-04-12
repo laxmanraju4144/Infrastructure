@@ -11,7 +11,7 @@ pipeline {
     environment {
         AWS_ACCESS_KEY_ID     = credentials('AWS_ACCESS_KEY_ID')
         AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
-        AWS_DEFAULT_REGION    = 'ap-northeast-1'
+        AWS_DEFAULT_REGION    = 'us-east-1'
     }
 
     agent any
@@ -22,7 +22,7 @@ pipeline {
             steps {
                 script {
                     dir('terraform') {
-                        git url: 'https://github.com/QuntamVector/Infrastructure.git', branch: 'main'
+                        git url: 'https://github.com/laxmanraju4144/Infrastructure.git', branch: 'main'
                     }
                 }
             }
