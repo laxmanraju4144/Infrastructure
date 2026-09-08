@@ -10,11 +10,10 @@
 
 terraform {
   backend "s3" {
-    bucket        = "laxmanraju-statefile-logs"   # your S3 bucket
+    bucket        = "laxmanraju-statefile-logs"
     key           = "env/terraform.tfstate"
-    dynamodb_table = "laxmanraju-statefile-DB-lock"   # path inside the bucket
     region        = "us-east-1"
     encrypt       = true
-    use_lockfile  = true                      # replaces dynamodb_table
+    use_lockfile  = true
   }
 }
