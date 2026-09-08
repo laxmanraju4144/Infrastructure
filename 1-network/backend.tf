@@ -8,13 +8,14 @@
 #   }
 # }
 
+
 terraform {
   backend "s3" {
-    bucket        = "laxmanraju-statefile-logs"   # your S3 bucket
-    key           = "env/terraform.tfstate"
-    //dynamodb_table = "laxmanraju-statefile-DB-lock"   # path inside the bucket
-    region        = "us-east-1"
-    encrypt       = true
-    use_lockfile  = true                      # replaces dynamodb_table
+    bucket         = "laxmanraju-statefile-logs"
+    key            = "env/terraform.tfstate"
+    region         = "us-east-1"
+    encrypt        = true
+    dynamodb_table = "laxmanraju-statefile-DB-lock"  # Enables distributed locking
+    use_lockfile      = true  # Optional: Use a local lock file for additional safety
   }
 }
