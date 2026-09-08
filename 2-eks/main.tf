@@ -28,6 +28,7 @@ module "eks" {
     default = {
       name           = "${var.project}-ng"
       instance_types = ["m5.large"] 
+      ami_type       = "AL2_x86_64" 
       min_size       = 3
       max_size       = 5
       desired_size   = 3
