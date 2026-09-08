@@ -138,7 +138,7 @@ pipeline {
 
                   # Delete all object versions
                   aws s3api list-object-versions --bucket laxmanraju-statefile-logs \
-                    --query='{Objects: Versions[].{Key:Key,VersionId:VersionId}, Quiet: false}' \
+                    --query '{"Objects": Versions[].{Key:Key,VersionId:VersionId}, "Quiet": false}' \
                     --output json > versions.json
                   if [ -s versions.json ]; then
                     aws s3api delete-objects --bucket laxmanraju-statefile-logs --delete file://versions.json
@@ -146,7 +146,7 @@ pipeline {
 
                   # Delete all delete markers
                   aws s3api list-object-versions --bucket laxmanraju-statefile-logs \
-                    --query='{Objects: DeleteMarkers[].{Key:Key,VersionId:VersionId}, Quiet: false}' \
+                    --query '{"Objects": DeleteMarkers[].{Key:Key,VersionId:VersionId}, "Quiet": false}' \
                     --output json > markers.json
                   if [ -s markers.json ]; then
                     aws s3api delete-objects --bucket laxmanraju-statefile-logs --delete file://markers.json
@@ -175,6 +175,7 @@ pipeline {
         }
     }
 }
+
 
 
 
