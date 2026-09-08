@@ -33,7 +33,7 @@ pipeline {
         stage('Plan: 0-bootstrap') {
             when { expression { params.terraformAction == 'apply' } }
             steps {
-                sh 'cd terraform/0-bootstrap && terraform init -reconfigure -input=false'
+                sh 'cd terraform/0-bootstrap && terraform init -input=false'
                 sh 'cd terraform/0-bootstrap && terraform plan -out tfplan'
                 sh 'cd terraform/0-bootstrap && terraform show -no-color tfplan > tfplan.txt'
             }
@@ -60,7 +60,7 @@ pipeline {
         stage('Plan: 1-network') {
             when { expression { params.terraformAction == 'apply' } }
             steps {
-                sh 'cd terraform/1-network && terraform init -reconfigure -input=false'
+                sh 'cd terraform/1-network && terraform init -input=false'
                 sh 'cd terraform/1-network && terraform plan -out tfplan'
                 sh 'cd terraform/1-network && terraform show -no-color tfplan > tfplan.txt'
             }
@@ -126,27 +126,6 @@ pipeline {
             steps {
                 sh 'cd terraform/1-network && terraform init -reconfigure -input=false'
                 sh 'cd terraform/1-network && terraform destroy -auto-approve'
-            }
-        }
-
-        // Cleanup stage before destroying bootstrap
-        stage('Cleanup Backend Bucket') {
-            when { expression { params.terraformAction == 'destroy' } }
-            steps {
-                sh '''
-                if aws s3api head-bucket --bucket laxmanraju-statefile-logs 2>/dev/null; then
-                  echo "Emptying bucket before deletion..."
-                  # Delete all object versions
-                  aws s3api list-object-versions --bucket laxmanraju-statefile-logs \
-                  --query='{Objects: Versions[].{Key:Key,VersionId:VersionId}, Quiet: false}' \
-                  | jq -c . | aws s3api delete-objects --bucket laxmanraju-statefile-logs --delete file://-
-
-                  # Delete all delete markers
-                  aws s3api list-object-versions --bucket laxmanraju-statefile-logs \
-                  --query='{Objects: DeleteMarkers[].{Key:Key,VersionId:VersionId}, Quiet: false}' \
-                  | jq -c . | aws s3api delete-objects --bucket laxmanraju-statefile-logs --delete file://-
-                fi
-                '''
             }
         }
 
