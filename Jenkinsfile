@@ -33,11 +33,10 @@ pipeline {
         stage('Plan: 0-bootstrap') {
             when { expression { params.terraformAction == 'apply' } }
             steps {
-                sh 'cd terraform/0-bootstrap && terraform init -input=false'
-                // Import existing resources into state if they already exist in AWS
-                // '|| true' ensures pipeline does not fail if resource does not exist yet (first run)
-                sh 'cd terraform/0-bootstrap && terraform import aws_s3_bucket.tf_state laxmanraju-statefile-logs || true'
-                sh 'cd terraform/0-bootstrap && terraform import aws_dynamodb_table.tf_lock laxmanraju-statefile-DB-lock || true'
+                 sh 'cd terraform/1-network && terraform init -reconfigure -input=false'
+                // sh 'cd terraform/0-bootstrap && terraform init -input=false'
+                // sh 'cd terraform/0-bootstrap && terraform import aws_s3_bucket.tf_state laxmanraju-statefile-logs || true'
+             //   sh 'cd terraform/0-bootstrap && terraform import aws_dynamodb_table.tf_lock laxmanraju-statefile-DB-lock || true'
                 sh 'cd terraform/0-bootstrap && terraform plan -out tfplan'
                 sh 'cd terraform/0-bootstrap && terraform show -no-color tfplan > tfplan.txt'
             }
