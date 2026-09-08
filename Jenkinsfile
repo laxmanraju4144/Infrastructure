@@ -113,6 +113,28 @@ pipeline {
 
         // ─── DESTROY STAGES (reverse order) ───────────────────────────────────
 
+        stage('Cleanup Backend Bucket') {
+             when { expression { params.terraformAction == 'destroy' } }
+             steps {
+                sh '''
+                    if aws s3api head-bucket --bucket laxmanraju-statefile-logs 2>/dev/null; then
+                    echo "Emptying bucket before deletion..."
+          
+                     # Delete all object versions
+                     aws s3api list-object-versions --bucket laxmanraju-statefile-logs \
+                      --query='{Objects: Versions[].{Key:Key,VersionId:VersionId}, Quiet: false}' \
+                    | jq -c . | aws s3api delete-objects --bucket laxmanraju-statefile-logs --delete file://-
+
+                   # Delete all delete markers
+                aws s3api list-object-versions --bucket laxmanraju-statefile-logs \
+                --query='{Objects: DeleteMarkers[].{Key:Key,VersionId:VersionId}, Quiet: false}' \
+             | jq -c . | aws s3api delete-objects --bucket laxmanraju-statefile-logs --delete file://-
+                fi
+              '''    
+            }
+        }
+
+        
         stage('Destroy: 2-eks') {
             when { expression { params.terraformAction == 'destroy' } }
             steps {
