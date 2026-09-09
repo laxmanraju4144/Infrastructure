@@ -1,6 +1,7 @@
 variable "project" {
-  type    = string
-  default = "microservices-v2"
+  type        = string
+  description = "Project name used for resource tags"
+  default     = "microservices-v2"
 }
 
 variable "vpc_cidr" {
@@ -12,3 +13,5 @@ variable "azs" {
   type    = list(string)
   default = ["us-east-1a", "us-east-1b"]
 }
+
+
