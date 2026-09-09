@@ -4,44 +4,97 @@ locals {
   public_subnet_ids  = data.terraform_remote_state.network.outputs.public_subnet_ids
 }
 
+# module "eks" {
+#   source  = "terraform-aws-modules/eks/aws"
+#   version = "~> 20.0"
+
+#   cluster_name    = var.project
+#   cluster_version = var.kubernetes_version
+
+#   vpc_id     = local.vpc_id
+#   subnet_ids = local.private_subnet_ids
+
+#   # Enable IAM Roles for Service Accounts (IRSA) - required for ALB controller later
+#   enable_irsa = true
+
+#   # Endpoint access
+#   cluster_endpoint_public_access  = true
+#   cluster_endpoint_private_access = true
+#   enable_cluster_creator_admin_permissions = true
+
+
+#   # Managed Node Group(s)
+#   eks_managed_node_groups = {
+#     default = {
+#       name           = "${var.project}-ng"
+#       instance_types = ["m7i-flex.large"] 
+#       ami_type       = "AL2_x86_64" 
+#       min_size       = 3
+#       max_size       = 5
+#       desired_size   = 3
+
+#       subnet_ids = local.private_subnet_ids
+
+#       # Disable launch template so remote_access (SSH) can be used
+#       use_custom_launch_template = false
+
+#       remote_access = {
+#         ec2_ssh_key               = var.ssh_key_name
+#         source_security_group_ids = []
+#       }
+#     }
+#   }
+
+#   tags = {
+#     Project = var.project
+#   }
+# }
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
   version = "~> 20.0"
 
   cluster_name    = var.project
-  cluster_version = var.kubernetes_version
+  cluster_version = "1.33" # or the latest supported version
 
   vpc_id     = local.vpc_id
   subnet_ids = local.private_subnet_ids
 
-  # Enable IAM Roles for Service Accounts (IRSA) - required for ALB controller later
   enable_irsa = true
-
-  # Endpoint access
   cluster_endpoint_public_access  = true
   cluster_endpoint_private_access = true
   enable_cluster_creator_admin_permissions = true
 
-
-  # Managed Node Group(s)
   eks_managed_node_groups = {
     default = {
       name           = "${var.project}-ng"
-      instance_types = ["m7i-flex.large"] 
-      ami_type       = "AL2_x86_64" 
+      instance_types = ["m7i-flex.large"]
+      ami_type       = "AL2_x86_64"
       min_size       = 3
       max_size       = 5
       desired_size   = 3
-
-      subnet_ids = local.private_subnet_ids
-
-      # Disable launch template so remote_access (SSH) can be used
+      subnet_ids     = local.private_subnet_ids
       use_custom_launch_template = false
 
       remote_access = {
         ec2_ssh_key               = var.ssh_key_name
         source_security_group_ids = []
       }
+    }
+  }
+
+  # ✅ Managed Add-ons
+  cluster_addons = {
+    vpc-cni = {
+      addon_version = "v1.22.4-eksbuild.3"
+      resolve_conflicts = "OVERWRITE"
+    }
+    kube-proxy = {
+      addon_version = "v1.30.6-eksbuild.21"
+      resolve_conflicts = "OVERWRITE"
+    }
+    coredns = {
+      addon_version = "v1.13.2-eksbuild.24"
+      resolve_conflicts = "OVERWRITE"
     }
   }
 
