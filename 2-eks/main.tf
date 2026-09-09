@@ -83,22 +83,24 @@ module "eks" {
   }
 
   # ✅ Managed Add-ons
-  cluster_addons = {
-    vpc-cni = {
-      addon_version = "v1.22.4-eksbuild.3"
-      resolve_conflicts = "OVERWRITE"
-    }
-    kube-proxy = {
-      addon_version = "v1.30.6-eksbuild.21"
-      resolve_conflicts = "OVERWRITE"
-    }
-    coredns = {
-      addon_version = "v1.13.2-eksbuild.24"
-      resolve_conflicts = "OVERWRITE"
-    }
+ cluster_addons = {
+  vpc-cni = {
+    addon_version     = "v1.18.1-eksbuild.2"
+    resolve_conflicts = "OVERWRITE"
   }
+  kube-proxy = {
+    addon_version     = "v1.30.1-eksbuild.1"
+    resolve_conflicts = "OVERWRITE"
+  }
+  coredns = {
+    addon_version     = "v1.10.1-eksbuild.2"
+    resolve_conflicts = "OVERWRITE"
+  }
+}
 
   tags = {
     Project = var.project
   }
 }
+
+
