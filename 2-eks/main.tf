@@ -54,7 +54,7 @@ module "eks" {
   version = "~> 20.0"
 
   cluster_name    = var.project
-  cluster_version = "1.30" # or the latest supported version
+  cluster_version = "1.30"
 
   vpc_id     = local.vpc_id
   subnet_ids = local.private_subnet_ids
@@ -82,25 +82,42 @@ module "eks" {
     }
   }
 
-  # ✅ Managed Add-ons
- cluster_addons = {
-  vpc-cni = {
-    addon_version     = "v1.18.1-eksbuild.2"
-    resolve_conflicts = "OVERWRITE"
+#   # ✅ Managed Add-ons
+#  cluster_addons = {
+#   vpc-cni = {
+#     addon_version     = "v1.18.1-eksbuild.2"
+#     resolve_conflicts = "OVERWRITE"
+#   }
+#   kube-proxy = {
+#     addon_version     = "v1.30.1-eksbuild.1"
+#     resolve_conflicts = "OVERWRITE"
+#   }
+#   coredns = {
+#     addon_version     = "v1.10.1-eksbuild.2"
+#     resolve_conflicts = "OVERWRITE"
+#   }
+# }
+
+    # ✅ Managed Add-ons with auto-discovery
+  cluster_addons = {
+    vpc-cni = {
+      addon_version     = data.aws_eks_addon_version.vpc_cni.version
+      resolve_conflicts = "OVERWRITE"
+    }
+    kube-proxy = {
+      addon_version     = data.aws_eks_addon_version.kube_proxy.version
+      resolve_conflicts = "OVERWRITE"
+    }
+    coredns = {
+      addon_version     = data.aws_eks_addon_version.coredns.version
+      resolve_conflicts = "OVERWRITE"
+    }
   }
-  kube-proxy = {
-    addon_version     = "v1.30.1-eksbuild.1"
-    resolve_conflicts = "OVERWRITE"
-  }
-  coredns = {
-    addon_version     = "v1.10.1-eksbuild.2"
-    resolve_conflicts = "OVERWRITE"
-  }
-}
 
   tags = {
     Project = var.project
   }
 }
+
 
 
