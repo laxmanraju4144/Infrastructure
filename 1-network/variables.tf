@@ -1,7 +1,6 @@
 variable "project" {
   type        = string
   description = "Project name used for resource tags"
-  default     = "microservices-v2"
 }
 
 variable "vpc_cidr" {
