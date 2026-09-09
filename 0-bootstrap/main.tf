@@ -1,6 +1,7 @@
 variable "project" {
   description = "Project name used for resource tags"
   type        = string
+  default     = "microservices-v2"
 }
 
 resource "aws_s3_bucket" "tf_state" {
