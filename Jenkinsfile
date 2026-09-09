@@ -129,32 +129,32 @@ pipeline {
             }
         }
 
-        stage('Cleanup Backend Bucket') {
-            when { expression { params.terraformAction == 'destroy' } }
-            steps {
-                sh '''
-                if aws s3api head-bucket --bucket laxmanraju-statefile-logs 2>/dev/null; then
-                  echo "Emptying bucket before deletion..."
+        // stage('Cleanup Backend Bucket') {
+        //     when { expression { params.terraformAction == 'destroy' } }
+        //     steps {
+        //         sh '''
+        //         if aws s3api head-bucket --bucket laxmanraju-statefile-logs 2>/dev/null; then
+        //           echo "Emptying bucket before deletion..."
 
-                  # Delete all object versions
-                  aws s3api list-object-versions --bucket laxmanraju-statefile-logs \
-                    --query '{"Objects": Versions[].{Key:Key,VersionId:VersionId}, "Quiet": false}' \
-                    --output json > versions.json
-                  if [ -s versions.json ]; then
-                    aws s3api delete-objects --bucket laxmanraju-statefile-logs --delete file://versions.json
-                  fi
+        //           # Delete all object versions
+        //           aws s3api list-object-versions --bucket laxmanraju-statefile-logs \
+        //             --query '{"Objects": Versions[].{Key:Key,VersionId:VersionId}, "Quiet": false}' \
+        //             --output json > versions.json
+        //           if [ -s versions.json ]; then
+        //             aws s3api delete-objects --bucket laxmanraju-statefile-logs --delete file://versions.json
+        //           fi
 
-                  # Delete all delete markers
-                  aws s3api list-object-versions --bucket laxmanraju-statefile-logs \
-                    --query '{"Objects": DeleteMarkers[].{Key:Key,VersionId:VersionId}, "Quiet": false}' \
-                    --output json > markers.json
-                  if [ -s markers.json ]; then
-                    aws s3api delete-objects --bucket laxmanraju-statefile-logs --delete file://markers.json
-                  fi
-                fi
-                '''
-            }
-        }
+        //           # Delete all delete markers
+        //           aws s3api list-object-versions --bucket laxmanraju-statefile-logs \
+        //             --query '{"Objects": DeleteMarkers[].{Key:Key,VersionId:VersionId}, "Quiet": false}' \
+        //             --output json > markers.json
+        //           if [ -s markers.json ]; then
+        //             aws s3api delete-objects --bucket laxmanraju-statefile-logs --delete file://markers.json
+        //           fi
+        //         fi
+        //         '''
+        //     }
+        // }
 
         stage('Destroy: 0-bootstrap') {
             when { expression { params.terraformAction == 'destroy' } }
