@@ -68,7 +68,7 @@ module "eks" {
     default = {
       name           = "${var.project}-ng"
       instance_types = ["m7i-flex.large"]
-      ami_type       = "AL2_x86_64"
+      ami_type       = "AL2023_x86_64_STANDARD"
       min_size       = 3
       max_size       = 5
       desired_size   = 3
