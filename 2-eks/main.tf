@@ -54,7 +54,7 @@ module "eks" {
   version = "~> 20.0"
 
   cluster_name    = var.project
-  cluster_version = "1.33" # or the latest supported version
+  cluster_version = "1.30" # or the latest supported version
 
   vpc_id     = local.vpc_id
   subnet_ids = local.private_subnet_ids
